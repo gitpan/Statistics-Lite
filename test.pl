@@ -21,8 +21,6 @@ print "ok 1\n";
 use Test;
 BEGIN { plan tests => 20 }
 
-my %stats= statshash(1,2,3);
-
 ok(min(1,2,3),1);
 ok(max(1,2,3),3);
 ok(range(1,2,3),2);
@@ -35,6 +33,8 @@ ok(mode(1,2,3),2);
 
 ok(3*variance(1,2,3),2);
 ok(3*stddev(1,2,3)**2,2);
+
+my %stats= statshash(1,2,3);
 
 ok($stats{min},1);
 ok($stats{max},3);

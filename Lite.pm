@@ -3,7 +3,7 @@ use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 require Exporter;
 
-$VERSION = '1.0';
+$VERSION = '1.01';
 @ISA = qw(Exporter);
 @EXPORT = ();
 @EXPORT_OK = qw(min max range sum count mean median mode variance stddev statshash statsinfo);
@@ -66,9 +66,9 @@ sub median
   return unless @_;
   return $_[0] unless @_ > 1;
   @_= sort{$a<=>$b}@_;
-  unless(@_&1) return $_[@_/2];
-  my $mid= (@_-1)/2;
-  return ($_[$mid]+$_[$mid+2])/2;
+  return $_[$#_/2] if @_&1;
+  my $mid= @_/2;
+  return ($_[$mid-1]+$_[$mid])/2;
 }
 
 sub mode
@@ -116,8 +116,8 @@ sub statshash
   my $count= scalar(@_);
   @_= sort{$a<=>$b}@_;
   my $median;
-  if(@_&1) { my $mid= (@_-1)/2; $median= ($_[$mid]+$_[$mid+2])/2; }
-  else { $median= $_[@_/2]; }
+  if(@_&1) { $median= $_[$#_/2]; }
+  else { my $mid= @_/2; $median= ($_[$mid-1]+$_[$mid])/2; }
   my $sum= 0;
   my %count;
   foreach(@_) { $sum+= $_; $count{$_}++; }
