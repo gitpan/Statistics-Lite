@@ -13,7 +13,7 @@ ppmdist : ppd pure_all
 
 WriteMakefile(
   NAME	          => 'Statistics::Lite',
-  AUTHOR          => 'Brian Lalonde (brianl@sd81.k12.wa.us)',
+  AUTHOR          => 'Brian Lalonde (brian@webcoder.info)',
   VERSION_FROM    => 'Lite.pm', 
   ABSTRACT_FROM   => 'Lite.pm',
   BINARY_LOCATION => 'Statistics-Lite.ppm.tar.gz',

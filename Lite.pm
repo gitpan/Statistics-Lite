@@ -3,7 +3,7 @@ use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 require Exporter;
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 @ISA = qw(Exporter);
 @EXPORT = ();
 @EXPORT_OK = qw(min max range sum count mean median mode variance stddev statshash statsinfo);
@@ -222,7 +222,7 @@ use C<:stats> to import C<statshash(@data)> and C<statsinfo(@data)>.
 
 =head1 AUTHOR
 
-Brian Lalonde E<lt>brianl@sd81.k12.wa.usE<gt>
+Brian Lalonde E<lt>brian@webcoder.infoE<gt>
 
 =head1 SEE ALSO
 
