@@ -3,7 +3,7 @@ use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 require Exporter;
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 @ISA = qw(Exporter);
 @EXPORT = ();
 @EXPORT_OK = qw(min max range sum count mean median mode variance stddev statshash statsinfo);
@@ -182,6 +182,14 @@ Statistics::Lite - Small stats stuff.
 This module is a lightweight, functional alternative to larger, more complete,
 object-oriented statistics packages.
 As such, it is likely to be better suited, in general, to smaller data sets.
+
+This is also a module for dilettantes. 
+
+If you expect "unbiased" estimators or statistical rather than parameter variance,
+or even if you know what those terms mean, this module is not likely to meet your needs.
+
+When you just want something to give some very basic, high-school-level statistical values, 
+without having to set up and populate an object first, this module may be useful.
 
 =head1 FUNCTIONS
 

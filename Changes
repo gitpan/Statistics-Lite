@@ -8,3 +8,5 @@ Revision history for Perl extension Statistics::Lite.
     - fixed median algorithm
 1.01  Thu Jan 10 14:59:52 2002
     - bugfix version
+1.02  Fri Nov  4 12:25:00 2005
+    - expanded explanation of limitations
