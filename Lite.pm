@@ -3,7 +3,7 @@ use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 require Exporter;
 
-$VERSION = '1.03';
+$VERSION = '2.0';
 @ISA = qw(Exporter);
 @EXPORT = ();
 @EXPORT_OK = qw(min max range sum count mean median mode variance stddev statshash statsinfo);
@@ -87,7 +87,7 @@ sub variance
   return unless @_;
   return 0 unless @_ > 1;
   my $mean= mean @_;
-  return mean map { ($_ - $mean)**2 } @_;
+  return (sum map { ($_ - $mean)**2 } @_) / $#_;
 }
 
 sub stddev
@@ -185,11 +185,19 @@ As such, it is likely to be better suited, in general, to smaller data sets.
 
 This is also a module for dilettantes. 
 
-If you expect "unbiased" estimators or statistical rather than parameter variance,
-or even if you know what those terms mean, this module is not likely to meet your needs.
-
 When you just want something to give some very basic, high-school-level statistical values, 
 without having to set up and populate an object first, this module may be useful.
+
+=over 6
+
+=head2 NOTE
+
+This version now uses unbiased estimators (previous versions used biased estimators) for variance and standard deviation.
+To get the same biased C<stddev()> and C<variance()> available in previous versions, simply add a zero to the data set:
+
+  $stddev_biased= stddev 0, @data;
+
+=back
 
 =head1 FUNCTIONS
 

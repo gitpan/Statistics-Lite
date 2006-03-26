@@ -31,8 +31,8 @@ ok(mean(1,2,3),2);
 ok(median(1,2,3),2);
 ok(mode(1,2,3),2);
 
-ok(3*variance(1,2,3),2);
-ok(3*stddev(1,2,3)**2,2);
+ok(variance(1,2,3),1);
+ok(stddev(1,2,3),1);
 
 my %stats= statshash(1,2,3);
 
@@ -46,5 +46,5 @@ ok($stats{mean},2);
 ok($stats{median},2);
 ok($stats{mode},2);
 
-ok(3*$stats{variance},2);
-ok(3*$stats{stddev}**2,2);
+ok($stats{variance},1);
+ok($stats{stddev},1);
