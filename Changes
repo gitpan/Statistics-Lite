@@ -10,3 +10,9 @@ Revision history for Perl extension Statistics::Lite.
     - bugfix version
 1.02  Fri Nov  4 12:25:00 2005
     - expanded explanation of limitations
+
+ ... time passed, people laughed and loved and sat, and we all learned something about the true meaning of New Year's Day ...
+
+3.00  Sat Mar  3 16:48:00 2007
+    - after much delay, stddev has been restored to the sample or biased version of the formula; if you need the unbiased version, use stddev(0,@data)
+    - added frequencies() function from Nathan Haigh

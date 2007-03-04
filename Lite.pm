@@ -3,10 +3,10 @@ use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 require Exporter;
 
-$VERSION = '2.0';
+$VERSION = '3.0';
 @ISA = qw(Exporter);
 @EXPORT = ();
-@EXPORT_OK = qw(min max range sum count mean median mode variance stddev statshash statsinfo);
+@EXPORT_OK = qw(min max range sum count mean median mode variance stddev statshash statsinfo frequencies);
 %EXPORT_TAGS= 
 ( 
   all   => [ @EXPORT_OK ],
@@ -87,7 +87,7 @@ sub variance
   return unless @_;
   return 0 unless @_ > 1;
   my $mean= mean @_;
-  return (sum map { ($_ - $mean)**2 } @_) / $#_;
+  return (sum map { ($_ - $mean)**2 } @_) / ( $#_ +1 );
 }
 
 sub stddev
@@ -156,6 +156,15 @@ mode     = $stats{mode}
 variance = $stats{variance}
 stddev   = $stats{stddev}
 .
+}
+
+sub frequencies
+{
+  return unless @_;
+  return ( $_[0], 1 ) unless @_ > 1;
+  my %count;
+  foreach(@_) { $count{$_}++; }
+  return %count;
 }
 
 1;
@@ -227,6 +236,11 @@ with the corresponding values, calculated for the data set.
 
 Returns a string describing the data set, using the values detailed above.
 
+=item C<frequencies(@data)>
+
+Returns a hash, the keys are the distinct values in the data set,
+and the values are the number of times that value occurred in the data set.
+
 =back
 
 =head2 Import Tags
@@ -238,7 +252,7 @@ use C<:stats> to import C<statshash(@data)> and C<statsinfo(@data)>.
 
 =head1 AUTHOR
 
-Brian Lalonde E<lt>brian@webcoder.infoE<gt>
+Brian Lalonde E<lt>brian@webcoder.infoE<gt>, C<frequencies(@data)> by Nathan Haigh.
 
 =head1 SEE ALSO
 

@@ -19,7 +19,7 @@ print "ok 1\n";
 # of the test code):
 
 use Test;
-BEGIN { plan tests => 20 }
+BEGIN { plan tests => 23 }
 
 ok(min(1,2,3),1);
 ok(max(1,2,3),3);
@@ -48,3 +48,8 @@ ok($stats{mode},2);
 
 ok($stats{variance},1);
 ok($stats{stddev},1);
+
+%stats= freqhash(1,2,3,3);
+ok($stats{1},1);
+ok($stats{2},1);
+ok($stats{3},2);
