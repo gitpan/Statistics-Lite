@@ -3,15 +3,15 @@ use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 require Exporter;
 
-$VERSION = '3.0';
+$VERSION = '3.1';
 @ISA = qw(Exporter);
 @EXPORT = ();
-@EXPORT_OK = qw(min max range sum count mean median mode variance stddev statshash statsinfo frequencies);
+@EXPORT_OK = qw(min max range sum count mean median mode variance stddev variancep stddevp statshash statsinfo frequencies);
 %EXPORT_TAGS= 
 ( 
-  all   => [ @EXPORT_OK ],
-  funcs => [qw<min max range sum count mean median mode variance stddev>],
-  stats => [qw<statshash statsinfo>],
+	all   => [ @EXPORT_OK ],
+	funcs => [qw<min max range sum count mean median mode variance stddev variancep stddevp>],
+	stats => [qw<statshash statsinfo>],
 );
 
 sub count
@@ -19,152 +19,172 @@ sub count
 
 sub min 
 { 
-  return unless @_;
-  return $_[0] unless @_ > 1;
-  my $min= shift;
-  foreach(@_) { $min= $_ if $_ < $min; }
-  return $min;
+	return unless @_;
+	return $_[0] unless @_ > 1;
+	my $min= shift;
+	foreach(@_) { $min= $_ if $_ < $min; }
+	return $min;
 }
 
 sub max 
 { 
-  return unless @_;
-  return $_[0] unless @_ > 1;
-  my $max= shift;
-  foreach(@_) { $max= $_ if $_ > $max; }
-  return $max;
+	return unless @_;
+	return $_[0] unless @_ > 1;
+	my $max= shift;
+	foreach(@_) { $max= $_ if $_ > $max; }
+	return $max;
 }
 
 sub range
 {
-  return unless @_;
-  return 0 unless @_ > 1;
-  return abs($_[1]-$_[0]) unless @_ > 2;
-  my $min= shift; my $max= $min;
-  foreach(@_) { $min= $_ if $_ < $min; $max= $_ if $_ > $max; }
-  return $max - $min;
+	return unless @_;
+	return 0 unless @_ > 1;
+	return abs($_[1]-$_[0]) unless @_ > 2;
+	my $min= shift; my $max= $min;
+	foreach(@_) { $min= $_ if $_ < $min; $max= $_ if $_ > $max; }
+	return $max - $min;
 }
 
 sub sum
 {
-  return unless @_;
-  return $_[0] unless @_ > 1;
-  my $sum;
-  foreach(@_) { $sum+= $_; }
-  return $sum;
+	return unless @_;
+	return $_[0] unless @_ > 1;
+	my $sum;
+	foreach(@_) { $sum+= $_; }
+	return $sum;
 }
 
 sub mean
 {
-  return unless @_;
-  return $_[0] unless @_ > 1;
-  return sum(@_)/scalar(@_);
+	return unless @_;
+	return $_[0] unless @_ > 1;
+	return sum(@_)/scalar(@_);
 }
 
 sub median
 {
-  return unless @_;
-  return $_[0] unless @_ > 1;
-  @_= sort{$a<=>$b}@_;
-  return $_[$#_/2] if @_&1;
-  my $mid= @_/2;
-  return ($_[$mid-1]+$_[$mid])/2;
+	return unless @_;
+	return $_[0] unless @_ > 1;
+	@_= sort{$a<=>$b}@_;
+	return $_[$#_/2] if @_&1;
+	my $mid= @_/2;
+	return ($_[$mid-1]+$_[$mid])/2;
 }
 
 sub mode
 {
-  return unless @_;
-  return $_[0] unless @_ > 1;
-  my %count;
-  foreach(@_) { $count{$_}++; }
-  my $maxhits= max(values %count);
-  foreach(keys %count) { delete $count{$_} unless $count{$_} == $maxhits; }
-  return mean(keys %count);
+	return unless @_;
+	return $_[0] unless @_ > 1;
+	my %count;
+	foreach(@_) { $count{$_}++; }
+	my $maxhits= max(values %count);
+	foreach(keys %count) { delete $count{$_} unless $count{$_} == $maxhits; }
+	return mean(keys %count);
 }
 
 sub variance
 {
-  return unless @_;
-  return 0 unless @_ > 1;
-  my $mean= mean @_;
-  return (sum map { ($_ - $mean)**2 } @_) / ( $#_ +1 );
+	return unless @_;
+	return 0 unless @_ > 1;
+	my $mean= mean @_;
+	return (sum map { ($_ - $mean)**2 } @_) / $#_;
+}
+
+sub variancep
+{
+	return unless @_;
+	return 0 unless @_ > 1;
+	my $mean= mean @_;
+	return (sum map { ($_ - $mean)**2 } @_) / ( $#_ +1 );
 }
 
 sub stddev
 {
-  return unless @_;
-  return 0 unless @_ > 1;
-  return sqrt variance @_;
+	return unless @_;
+	return 0 unless @_ > 1;
+	return sqrt variance @_;
+}
+
+sub stddevp
+{
+	return unless @_;
+	return 0 unless @_ > 1;
+	return sqrt variancep @_;
 }
 
 sub statshash
 {
-  return unless @_;
-  return
-  (
-    count    => 1,
-    min      => $_[0],
-    max      => $_[0],
-    range    => 0,
-    sum      => $_[0],
-    mean     => $_[0],
-    median   => $_[0],
-    mode     => $_[0],
-    variance => 0,
-    stddev   => 0,
-  ) unless @_ > 1;
-  my $count= scalar(@_);
-  @_= sort{$a<=>$b}@_;
-  my $median;
-  if(@_&1) { $median= $_[$#_/2]; }
-  else { my $mid= @_/2; $median= ($_[$mid-1]+$_[$mid])/2; }
-  my $sum= 0;
-  my %count;
-  foreach(@_) { $sum+= $_; $count{$_}++; }
-  my $mean= $sum/$count;
-  my $variance= mean map { ($_ - $mean)**2 } @_;
-  my $maxhits= max(values %count);
-  foreach(keys %count) 
-  { delete $count{$_} unless $count{$_} == $maxhits; }
-  return
-  (
-    count    => $count,
-    min      => $_[0],
-    max      => $_[-1],
-    range    => ($_[-1] - $_[0]),
-    sum      => $sum,
-    mean     => $mean,
-    median   => $median,
-    mode     => mean(keys %count),
-    variance => $variance,
-    stddev   => sqrt($variance),
-  );
+	return unless @_;
+	return
+	(
+		count     => 1,
+		min       => $_[0],
+		max       => $_[0],
+		range     => 0,
+		sum       => $_[0],
+		mean      => $_[0],
+		median    => $_[0],
+		mode      => $_[0],
+		variance  => 0,
+		stddev    => 0,
+		variancep => 0,
+		stddevp   => 0
+	) unless @_ > 1;
+	my $count= scalar(@_);
+	@_= sort{$a<=>$b}@_;
+	my $median;
+	if(@_&1) { $median= $_[$#_/2]; }
+	else { my $mid= @_/2; $median= ($_[$mid-1]+$_[$mid])/2; }
+	my $sum= 0;
+	my %count;
+	foreach(@_) { $sum+= $_; $count{$_}++; }
+	my $mean= $sum/$count;
+	my $maxhits= max(values %count);
+	foreach(keys %count) 
+	{ delete $count{$_} unless $count{$_} == $maxhits; }
+	return
+	(
+		count     => $count,
+		min       => $_[0],
+		max       => $_[-1],
+		range     => ($_[-1] - $_[0]),
+		sum       => $sum,
+		mean      => $mean,
+		median    => $median,
+		mode      => mean(keys %count),
+		variance  => variance(@_),
+		stddev    => stddev(@_),
+		variancep => variancep(@_),
+		stddevp   => stddevp(@_)
+	);
 }
 
 sub statsinfo
 {
-  my %stats= statshash(@_);
-  return <<".";
-min      = $stats{min}
-max      = $stats{max}
-range    = $stats{range}
-sum      = $stats{sum}
-count    = $stats{count}
-mean     = $stats{mean}
-median   = $stats{median}
-mode     = $stats{mode}
-variance = $stats{variance}
-stddev   = $stats{stddev}
+	my %stats= statshash(@_);
+	return <<".";
+min       = $stats{min}
+max       = $stats{max}
+range     = $stats{range}
+sum       = $stats{sum}
+count     = $stats{count}
+mean      = $stats{mean}
+median    = $stats{median}
+mode      = $stats{mode}
+variance  = $stats{variance}
+stddev    = $stats{stddev}
+variancep = $stats{variancep}
+stddevp   = $stats{stddevp}
 .
 }
 
 sub frequencies
 {
-  return unless @_;
-  return ( $_[0], 1 ) unless @_ > 1;
-  my %count;
-  foreach(@_) { $count{$_}++; }
-  return %count;
+	return unless @_;
+	return ( $_[0], 1 ) unless @_ > 1;
+	my %count;
+	foreach(@_) { $count{$_}++; }
+	return %count;
 }
 
 1;
@@ -176,15 +196,15 @@ Statistics::Lite - Small stats stuff.
 
 =head1 SYNOPSIS
 
-  use Statistics::Lite qw(:all);
+	use Statistics::Lite qw(:all);
 
-  $min= min @data;
-  $mean= mean @data;
+	$min= min @data;
+	$mean= mean @data;
 
-  %data= statshash @data;
-  print "sum= $data{sum} stddev= $data{stddev}\n";
+	%data= statshash @data;
+	print "sum= $data{sum} stddev= $data{stddev}\n";
 
-  print statsinfo(@data);
+	print statsinfo(@data);
 
 =head1 DESCRIPTION
 
@@ -201,10 +221,7 @@ without having to set up and populate an object first, this module may be useful
 
 =head2 NOTE
 
-This version now uses unbiased estimators (previous versions used biased estimators) for variance and standard deviation.
-To get the same biased C<stddev()> and C<variance()> available in previous versions, simply add a zero to the data set:
-
-  $stddev_biased= stddev 0, @data;
+This version now implements standard deviation and variance calculated by both the unbiased and biased estimators.
 
 =back
 
@@ -225,7 +242,11 @@ Calculates the mean, median, or mode average of the values in C<@data>.
 
 =item C<variance(@data)>, C<stddev(@data)>
 
-Return the standard deviation or variance of C<@data>.
+Return the standard deviation or variance of C<@data> for a sample (same as Excel's STDEV).
+
+=item C<variancep(@data)>, C<stddevp(@data)>
+
+Return the standard deviation or variance of C<@data> for the population (same as Excel's STDEVP).
 
 =item C<statshash(@data)>
 
@@ -252,7 +273,9 @@ use C<:stats> to import C<statshash(@data)> and C<statsinfo(@data)>.
 
 =head1 AUTHOR
 
-Brian Lalonde E<lt>brian@webcoder.infoE<gt>, C<frequencies(@data)> by Nathan Haigh.
+Brian Lalonde E<lt>brian@webcoder.infoE<gt>, 
+C<stddev(@data)>, C<stddevp(@data)>, C<variance(@data)>, C<variancep(@data)>, 
+and additional motivation by Nathan Haigh.
 
 =head1 SEE ALSO
 

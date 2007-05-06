@@ -19,9 +19,9 @@ WriteMakefile(
   BINARY_LOCATION => 'Statistics-Lite.ppm.tar.gz',
   dist            => 
   {
-    TAR      => 'C:\\Tools\\msys\\1.0\\bin\\tar.exe',
+    TAR      => 'C:\\Tools\\cygwin\\bin\\tar.exe',
     TARFLAGS => 'cvf',
-    COMPRESS => 'C:\\Tools\\msys\\1.0\\bin\\gzip.exe --best',
+    COMPRESS => 'C:\\Tools\\cygwin\\bin\\gzip.exe --best',
     SUFFIX   => '.gz',
   },
 );
