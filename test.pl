@@ -1,62 +1,52 @@
-# Before `make install' is performed this script should be runnable with
-# `make test'. After `make install' it should work as `perl test.pl'
+#!perl
+use strict;
+use warnings;
+use Test::More tests => 28;
 
-######################### We start with some black magic to print on failure.
-
-# Change 1..1 below to 1..last_test_to_print .
-# (It may become useful if the test is moved to ./t subdirectory.)
-
-BEGIN { $| = 1; }
-END {print "not ok 1\n" unless $loaded;}
-use Statistics::Lite ':all';
-$loaded = 1;
-print "ok 1\n";
+BEGIN { use_ok( 'Statistics::Lite', ':all' ); }
 
 ######################### End of black magic.
 
-# Insert your test code below (better if it prints "ok 13"
-# (correspondingly "not ok 13") depending on the success of chunk 13
+# Insert your test code below (better if it prints "is 13"
+# (correspondingly "not is 13") depending on the success of chunk 13
 # of the test code):
 
-use Test;
-BEGIN { plan tests => 27 }
+is(min(1,2,3),    1, "call min - functional interface");
+is(max(1,2,3),    3, "call max - functional interface");
+is(range(1,2,3),  2, "call range - functional interface");
+is(sum(1,2,3),    6, "call sum - functional interface");
+is(count(1,2,3),  3, "call count - functional interface");
+is(mean(1,2,3),   2, "call mean - functional interface");
+is(median(1,2,3), 2, "call median - functional interface");
+is(mode(1,2,3),   2, "call mode - functional interface");
 
-ok(min(1,2,3),1);
-ok(max(1,2,3),3);
-ok(range(1,2,3),2);
-ok(sum(1,2,3),6);
-ok(count(1,2,3),3);
+is(variance(1,2,3), 1, "call variance - functional interface");
+is(stddev(1,2,3),   1, "call stddev - functional interface");
 
-ok(mean(1,2,3),2);
-ok(median(1,2,3),2);
-ok(mode(1,2,3),2);
+is(variancep(2,4,2,4), 1, "call variancep - functional interface");
+is(stddevp(2,4,2,4),   1, "call stddevp - functional interface");
 
-ok(variance(1,2,3),1);
-ok(stddev(1,2,3),1);
-
-ok(variancep(2,4,2,4),1);
-ok(stddevp(2,4,2,4),1);
 
 my %stats= statshash(1,2,3);
 
-ok($stats{min},1);
-ok($stats{max},3);
-ok($stats{range},2);
-ok($stats{sum},6);
-ok($stats{count},3);
+is($stats{min},    1, "call min - hash-based interface");
+is($stats{max},    3, "call max - hash-based interface");
+is($stats{range},  2, "call range - hash-based interface");
+is($stats{sum},    6, "call sum - hash-based interface");
+is($stats{count},  3, "call count - hash-based interface");
+is($stats{mean},   2, "call mean - hash-based interface");
+is($stats{median}, 2, "call median - hash-based interface");
+is($stats{mode},   2, "call mode - hash-based interface");
 
-ok($stats{mean},2);
-ok($stats{median},2);
-ok($stats{mode},2);
+is($stats{variance}, 1, "call variance - hash-based interface");
+is($stats{stddev},   1, "call stddev - hash-based interface");
 
-ok($stats{variance},1);
-ok($stats{stddev},1);
 
 %stats= statshash(2,4,2,4);
-ok($stats{variancep});
-ok($stats{stddevp});
+ok($stats{variancep}, "call variancep - hash-based interface");
+ok($stats{stddevp},   "call stddevp - hash-based interface");
 
-%stats= freqhash(1,2,3,3);
-ok($stats{1},1);
-ok($stats{2},1);
-ok($stats{3},2);
+%stats= frequencies(1,2,3,3);
+is($stats{1},1, "frequencies matched correctly");
+is($stats{2},1, "frequencies matched correctly");
+is($stats{3},2, "frequencies matched correctly");

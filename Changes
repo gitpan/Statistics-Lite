@@ -16,3 +16,8 @@ Revision history for Perl extension Statistics::Lite.
 3.00  Sat Mar  3 16:48:00 2007
     - after much delay, stddev has been restored to the sample or biased version of the formula; if you need the unbiased version, use stddev(0,@data)
     - added frequencies() function from Nathan Haigh
+3.1   
+    - fixed and renamed biased (population) versions
+    - added unbiased versions
+3.2   Sun Jun 24 11:13:00 2007
+    - updated tests
